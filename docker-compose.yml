@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: formulary
+      POSTGRES_PASSWORD: formulary
+      POSTGRES_DB: formulary
+    ports:
+      - "55432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U formulary -d formulary"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: ./api
+    environment:
+      DATABASE_URL: postgresql+psycopg://formulary:formulary@db:5432/formulary
+      TEST_DATABASE_URL: postgresql+psycopg://formulary:formulary@db:5432/formulary_test
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/srv/api
+
+  web:
+    build: ./web
+    depends_on:
+      - api
+    ports:
+      - "4200:80"
+
+volumes:
+  pgdata:

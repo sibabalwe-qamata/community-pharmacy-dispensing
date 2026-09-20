@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+node_modules/
+dist/
+.angular/
+out-tsc/
+*.tsbuildinfo
+.idea/
+.vscode/
+technical-assessment-candidate-brief.pdf
